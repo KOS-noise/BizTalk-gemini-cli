@@ -1,62 +1,52 @@
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from groq import Groq
 from dotenv import load_dotenv
-# from groq import Groq # Import will be enabled in Phase 3
 
-# Load environment variables from .env file
+# .env 파일에서 환경 변수 로드
 load_dotenv()
 
 app = Flask(__name__)
-# Enable CORS to allow requests from the frontend
-CORS(app)
+# 프론트엔드からの 모든 출처에서의 요청을 허용
+CORS(app) 
 
-@app.route('/health', methods=['GET'])
-def health_check():
-    """
-    Simple health check endpoint to verify the backend is running.
-    """
-    return jsonify({
-        "status": "active",
-        "service": "BizTone Converter Backend",
-        "version": "1.0.0"
-    }), 200
+# Groq 클라이언트 초기화
+# API 키는 환경 변수 'GROQ_API_KEY'에서 자동으로 로드됩니다.
+try:
+    groq_client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+    print("Groq client initialized successfully.")
+except Exception as e:
+    groq_client = None
+    print(f"Error initializing Groq client: {e}")
 
 @app.route('/api/convert', methods=['POST'])
 def convert_text():
     """
-    Main endpoint for text conversion.
-    Phase 1: Implements basic structure and dummy response.
-    Phase 3: Will integrate actual Groq AI API.
+    텍스트 변환을 위한 API 엔드포인트.
+    Sprint 1에서는 실제 변환 로직 대신 더미 데이터를 반환합니다.
     """
-    try:
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({"error": "Invalid JSON data"}), 400
-            
-        text = data.get('text', '')
-        target = data.get('target', '상사') # Default target
-        
-        if not text:
-            return jsonify({"error": "Text input is required"}), 400
+    data = request.json
+    original_text = data.get('text')
+    target = data.get('target')
 
-        # TODO: Phase 3 - Implement actual Groq API call here
-        # For Phase 1, we return a mock response to validate the flow
-        mock_converted_text = f"[TEST] {target}에게 보내는 변환된 메시지: {text}"
+    if not original_text or not target:
+        return jsonify({"error": "텍스트와 변환 대상은 필수입니다."}), 400
 
-        return jsonify({
-            "success": True,
-            "original_text": text,
-            "converted_text": mock_converted_text,
-            "target": target
-        }), 200
+    # Sprint 1: 실제 Groq API 호출 대신 더미 응답 반환
+    dummy_response = f"'{original_text}'를 '{target}'에게 보내는 말투로 변환한 결과입니다. (이것은 더미 응답입니다.)"
+    
+    response_data = {
+        "original_text": original_text,
+        "converted_text": dummy_response,
+        "target": target
+    }
+    
+    return jsonify(response_data)
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+@app.route('/')
+def index():
+    return "BizTone Converter 백엔드 서버가 실행 중입니다."
 
 if __name__ == '__main__':
-    # Run the Flask app
-    # Port can be configured via environment variable
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(debug=True, port=5000)
