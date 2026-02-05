@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from groq import Groq
 from dotenv import load_dotenv
@@ -7,12 +7,14 @@ from dotenv import load_dotenv
 # .env 파일에서 환경 변수 로드
 load_dotenv()
 
-app = Flask(__name__)
-# 프론트엔드からの 모든 출처에서의 요청을 허용
+# 프론트엔드 정적 파일 경로 설정
+frontend_folder = os.path.join(os.getcwd(), 'frontend')
+
+app = Flask(__name__, static_folder=frontend_folder)
+# 프론트엔드로부터 모든 출처에서의 요청을 허용
 CORS(app) 
 
 # Groq 클라이언트 초기화
-# API 키는 환경 변수 'GROQ_API_KEY'에서 자동으로 로드됩니다.
 try:
     groq_client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
     print("Groq client initialized successfully.")
@@ -24,7 +26,6 @@ except Exception as e:
 def convert_text():
     """
     텍스트 변환을 위한 API 엔드포인트.
-    Sprint 1에서는 실제 변환 로직 대신 더미 데이터를 반환합니다.
     """
     data = request.json
     original_text = data.get('text')
@@ -45,8 +46,12 @@ def convert_text():
     return jsonify(response_data)
 
 @app.route('/')
-def index():
-    return "BizTone Converter 백엔드 서버가 실행 중입니다."
+def serve_index():
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    return send_from_directory(app.static_folder, path)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

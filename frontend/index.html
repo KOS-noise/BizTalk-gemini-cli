@@ -3,13 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BizTone Converter</title>
+    <title>BizTone Converter - 업무 말투 변환기</title>
+    <!-- Pretendard 폰트 적용 -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div id="app">
-        <h1>BizTone Converter</h1>
-        <p>Phase 1: Environment Setup & API Structure</p>
+    <div class="container">
+        <header>
+            <h1>BizTone Converter</h1>
+            <p class="subtitle">당신의 생각을 전문적인 비즈니스 언어로 변환하세요.</p>
+        </header>
+
+        <main>
+            <div class="converter-grid">
+                <!-- 입력 섹션 -->
+                <section class="card input-section">
+                    <div class="card-header">
+                        <h2>원문 입력</h2>
+                        <span id="char-count">0 / 500</span>
+                    </div>
+                    <textarea id="original-text" placeholder="변환하고 싶은 내용을 입력하세요. (예: 이거 언제까지 해야 돼요?)" maxlength="500"></textarea>
+                    
+                    <div class="controls">
+                        <div class="target-selector">
+                            <label for="target-select">수신자 선택:</label>
+                            <select id="target-select">
+                                <option value="상사">상사 (Upward)</option>
+                                <option value="타팀 동료">타팀 동료 (Lateral)</option>
+                                <option value="고객">고객 (External)</option>
+                            </select>
+                        </div>
+                        <button id="convert-btn" class="primary-btn">
+                            <span class="btn-text">변환하기</span>
+                            <div class="spinner hidden"></div>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- 결과 섹션 -->
+                <section class="card result-section">
+                    <div class="card-header">
+                        <h2>변환 결과</h2>
+                        <button id="copy-btn" class="secondary-btn hidden">복사하기</button>
+                    </div>
+                    <div id="result-text" class="result-placeholder">
+                        변환 버튼을 누르면 결과가 여기에 표시됩니다.
+                    </div>
+                    <div id="feedback-msg" class="feedback-msg hidden"></div>
+                </section>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 BizTone Converter. All rights reserved.</p>
+        </footer>
     </div>
     <script src="js/script.js"></script>
 </body>
