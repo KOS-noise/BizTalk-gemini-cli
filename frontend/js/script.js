@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const feedbackMsg = document.getElementById('feedback-msg');
     const btnText = convertBtn.querySelector('.btn-text');
     const spinner = convertBtn.querySelector('.spinner');
+    const btnIcon = convertBtn.querySelector('svg');
 
     // 실시간 글자 수 세기
     originalTextarea.addEventListener('input', () => {
@@ -26,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!text) {
             showFeedback('변환할 내용을 입력해주세요.', 'error');
+            originalTextarea.classList.add('error-border');
             originalTextarea.focus();
             return;
         }
@@ -33,9 +35,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // 로딩 상태 표시
         convertBtn.disabled = true;
         btnText.classList.add('hidden');
+        btnIcon.classList.add('hidden');
         spinner.classList.remove('hidden');
+        
         resultDisplay.textContent = '변환 중입니다...';
         resultDisplay.classList.add('result-placeholder');
+        // Reset alignment classes for placeholder
+        resultDisplay.classList.add('items-center', 'justify-center', 'text-center');
+        resultDisplay.classList.remove('text-left', 'items-start');
+        
         copyBtn.classList.add('hidden');
         hideFeedback();
 
@@ -52,7 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 resultDisplay.textContent = data.converted_text;
-                resultDisplay.classList.remove('result-placeholder');
+                resultDisplay.classList.remove('result-placeholder', 'items-center', 'justify-center', 'text-center');
+                resultDisplay.classList.add('text-left', 'items-start', 'text-slate-800');
                 copyBtn.classList.remove('hidden');
             } else {
                 throw new Error(data.error || '변환 중 오류가 발생했습니다.');
@@ -65,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 로딩 상태 해제
             convertBtn.disabled = false;
             btnText.classList.remove('hidden');
+            btnIcon.classList.remove('hidden');
             spinner.classList.add('hidden');
         }
     }
@@ -92,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 피드백 메시지 표시
     function showFeedback(message, type) {
         feedbackMsg.textContent = message;
-        feedbackMsg.className = `feedback-msg ${type}`;
+        feedbackMsg.className = `hidden mt-4 p-4 rounded-xl text-sm font-medium text-center transition-all feedback-msg ${type}`;
         feedbackMsg.classList.remove('hidden');
     }
 
