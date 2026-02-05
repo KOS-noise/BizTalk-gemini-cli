@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "/backend/app.py",
+      "src": "backend/app.py",
       "use": "@vercel/python",
       "config": {
         "runtime": "python3.9"
       }
     },
     {
-      "src": "/frontend/**",
+      "src": "frontend/**",
       "use": "@vercel/static-build",
       "config": {
         "distDir": "frontend"
@@ -19,7 +19,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/backend/app.py"
+      "dest": "backend/app.py"
     },
     {
       "src": "/css/(.*)",
